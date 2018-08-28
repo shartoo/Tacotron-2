@@ -164,10 +164,10 @@ class Feeder:
 		meta = self._test_meta[self._test_offset]
 		self._test_offset += 1
 
-		if self._hparams.train_with_GTA:
-			mel_file = meta[2]
-		else:
-			mel_file = meta[1]
+		for m in range(len(meta)):
+			if "mel" in meta[m] and ".npy" in meta[m]:
+				mel_file = meta[m]
+				break
 		audio_file = meta[0]
 
 		input_data = np.load(os.path.join(self._base_dir, audio_file))
@@ -234,12 +234,13 @@ class Feeder:
 		meta = self._train_meta[self._train_offset]
 		self._train_offset += 1
 
-		if self._hparams.train_with_GTA:
-			mel_file = meta[2]
-			if 'linear' in mel_file:
-				raise RuntimeError('Linear spectrogram files selected instead of GTA mels, did you specify the wrong metadata?')
-		else:
-			mel_file = meta[1]
+		for m in range(len(meta)):
+			if "mel" in meta[m] and ".npy" in meta[m]:
+				mel_file = meta[m]
+					if 'linear' in mel_file:
+						raise RuntimeError('Linear spectrogram files selected instead of GTA mels, did you specify the wrong metadata?')
+				break
+
 		audio_file = meta[0]
 
 		input_data = np.load(os.path.join(self._base_dir, audio_file))
